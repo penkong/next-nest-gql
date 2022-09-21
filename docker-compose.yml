@@ -1,0 +1,80 @@
+version: '3.4'
+services:
+
+  portainer:
+    image: portainer/portainer-ce
+    restart: always
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock 
+
+  redis:
+    image: "redis:6.2.2-alpine"
+    restart: always
+    volumes:
+      - redisvol:/var/lib/redis
+
+  pg:
+    image: 'postgres:13.2-alpine'
+    volumes: 
+      - pgvol:/var/lib/postgresql/data 
+      - ../app/services/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    stdin_open: true
+    environment:
+      # - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - PGPORT=5432
+    ports: 
+      - 5432:5432
+
+
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    restart: always
+    stdin_open: true
+    environment: 
+      - PGADMIN_DEFAULT_EMAIL=nazemi.works@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=secret
+    depends_on:
+      - pg
+
+  nest:
+    build: 
+      context: ./nest-gql
+    stdin_open: true
+    restart: always
+    volumes: 
+      - /app/node_modules 
+      - ./nest-gql:/app
+    environment:
+      - PORT=3300
+      - DBURL=pg
+      - DBNAME=nextnestgql
+      - NODE_ENV=development
+      - PGPASS=secret
+      - PGUSER=root
+      - CORS=http://localhost:5000
+    depends_on:
+      - pg
+      - redis
+
+
+  # nextjs: 
+  #   build: 
+  #     context: ./nextjs
+  #     dockerfile: Dockerfile.dev
+  #   restart: always
+  #   volumes: 
+  #     - /app/node_modules 
+  #   depends_on: 
+  #     - nest
+
+volumes: 
+  pgvol:
+    driver: local
+  portainer_data:
+    driver: local
+  redisvol:
+    driver: local
