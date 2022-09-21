@@ -60,16 +60,17 @@ services:
       - pg
       - redis
 
-
-  # nextjs: 
-  #   build: 
-  #     context: ./nextjs
-  #     dockerfile: Dockerfile.dev
-  #   restart: always
-  #   volumes: 
-  #     - /app/node_modules 
-  #   depends_on: 
-  #     - nest
+  nextjs: 
+    build: 
+      context: ./nextjs
+    restart: always
+    ports:
+      - 3000:3000
+    volumes: 
+      - /app/node_modules 
+      - ./nextjs:/app
+    depends_on: 
+      - nest
 
 volumes: 
   pgvol:
