@@ -18,3 +18,6 @@ buildweb:
 
 cleanall: 
 	docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
+
+cleanvolumes: 
+	docker volume rm $$(docker volume ls -q) && docker network prune --force 
