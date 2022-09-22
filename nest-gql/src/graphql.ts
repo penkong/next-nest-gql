@@ -8,45 +8,40 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export class CreateCatInput {
-    name?: Nullable<string>;
-    age?: Nullable<number>;
+export class CreateUserInput {
+    email: string;
+    password: string;
+}
+
+export class Auth {
+    __typename?: 'Auth';
+    id: string;
+    email: string;
 }
 
 export abstract class IQuery {
     __typename?: 'IQuery';
 
-    abstract cats(): Nullable<Nullable<Cat>[]> | Promise<Nullable<Nullable<Cat>[]>>;
+    abstract auth(id: string): Nullable<Auth> | Promise<Nullable<Auth>>;
 
-    abstract cat(id: string): Nullable<Cat> | Promise<Nullable<Cat>>;
+    abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
+
+    abstract user(id: string): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract createUser(createUserInput?: Nullable<CreateUserInput>): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract hello(): Nullable<string> | Promise<Nullable<string>>;
 }
 
-export abstract class IMutation {
-    __typename?: 'IMutation';
-
-    abstract createCat(createCatInput?: Nullable<CreateCatInput>): Nullable<Cat> | Promise<Nullable<Cat>>;
-}
-
-export abstract class ISubscription {
-    __typename?: 'ISubscription';
-
-    abstract catCreated(): Nullable<Cat> | Promise<Nullable<Cat>>;
-}
-
-export class Owner {
-    __typename?: 'Owner';
-    id: number;
-    name: string;
-    age?: Nullable<number>;
-    cats?: Nullable<Cat[]>;
-}
-
-export class Cat {
-    __typename?: 'Cat';
-    id?: Nullable<number>;
-    name?: Nullable<string>;
-    age?: Nullable<number>;
-    owner?: Nullable<Owner>;
+export class User {
+    __typename?: 'User';
+    user_id?: Nullable<string>;
+    email: string;
+    hashed_pass: string;
+    created_at: string;
+    updated_at?: Nullable<string>;
+    deleted_at?: Nullable<string>;
+    rv?: Nullable<number>;
 }
 
 type Nullable<T> = T | null;

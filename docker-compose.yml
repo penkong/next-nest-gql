@@ -14,20 +14,21 @@ services:
     volumes:
       - redisvol:/var/lib/redis
 
-  pg:
+  postgres:
     image: 'postgres:13.2-alpine'
     volumes: 
       - pgvol:/var/lib/postgresql/data 
-      - ../app/services/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     stdin_open: true
     environment:
-      # - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
       - PGPORT=5432
     ports: 
       - 5432:5432
+    hostname: postgres
 
 
   pgadmin:
@@ -38,29 +39,32 @@ services:
       - PGADMIN_DEFAULT_EMAIL=nazemi.works@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=secret
     depends_on:
-      - pg
-
-  nest:
-    build: 
-      context: ./nest-gql
-    stdin_open: true
-    restart: always
-    volumes: 
-      - /app/node_modules 
-      - ./nest-gql:/app
+      - postgres
     ports:
-      - 3300:3300
-    environment:
-      - PORT=3300
-      - DBURL=pg
-      - DBNAME=nextnestgql
-      - NODE_ENV=development
-      - PGPASS=secret
-      - PGUSER=root
-      - CORS=http://localhost:5000
-    depends_on:
-      - pg
-      - redis
+      - 80:80
+    hostname: pgadmin
+
+  # nest:
+  #   build: 
+  #     context: ./nest-gql
+  #   stdin_open: true
+  #   restart: always
+  #   volumes: 
+  #     - /app/node_modules 
+  #     - ./nest-gql:/app
+  #   ports:
+  #     - 3300:3300
+  #   environment:
+  #     - PORT=3300
+  #     - DBURL=pg
+  #     - DBNAME=nextnestgql
+  #     - NODE_ENV=development
+  #     - PGPASS=secret
+  #     - PGUSER=root
+  #     - CORS=http://localhost:5000
+  #   depends_on:
+  #     - pg
+  #     - redis
 
   # nextjs: 
   #   build: 

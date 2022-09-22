@@ -1,23 +1,10 @@
-type User {
-  user_id: ID
+type Auth {
+  id: ID!
   email: String!
-  hashed_pass: String!
-  created_at: String!
-  updated_at:String
-  deleted_at: String
-  rv: Int
 }
 
 type Query {
-  users: [User]
-  user(id: ID!): User
-  createUser(createUserInput: CreateUserInput): User
-  hello: String
-}
-
-input CreateUserInput {
-  email: String!
-  password: String!
+  auth(id: ID!): Auth
 }
 # type Mutation {} 
 # type Subscription {} 
